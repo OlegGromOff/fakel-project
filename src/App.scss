@@ -1,0 +1,98 @@
+.App {
+  text-align: center;
+}
+
+.nav-tabs {
+  justify-content: center;
+}
+
+.container {
+  padding-top: 30px;
+}
+
+.nav-item {
+  cursor: pointer;
+}
+
+.tab-pane {
+  padding-top: 20px;
+}
+
+.table-row.active {
+  background: #e2ebf2;
+}
+
+@media screen and(max-width:961px) {
+  .scroll-row {
+    overflow-x: scroll;
+    max-width: 960px;
+  }
+}
+
+
+.filter-row {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.btn-row {
+  text-align: left;
+  padding: 0 0 20px;
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.btn-wrapper {
+  margin-top: 10px;
+}
+
+.link-prev,
+.link-next {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+
+  &:hover {
+    z-index: 2;
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+}
+
+.pagination {
+  padding: 0 3px;
+
+}
+
+.inner-pagination {
+  padding: 0;
+  max-width: 305px;
+  overflow-x: scroll;
+}
+
+.page-link {
+  cursor: pointer;
+
+  &.active {
+    z-index: 3;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+thead {
+  th {
+    cursor: pointer
+  }
+}
+
+.form-control.input-field {
+  width: 285px;
+}
