@@ -35,9 +35,8 @@ const Users = ({ toggleRow, activeId }) => {
 
 
   let searchHandler;
-
-  searchHandler = val => {
-    // setSearch(val);  // изменил search
+  searchHandler = function (event, val) {
+    event.preventDefault();
     if (!search) {
       setTableUsers(tableUsers)
     }
@@ -64,16 +63,18 @@ const Users = ({ toggleRow, activeId }) => {
   return <>
     {tableUsers ?
       <>
-        <div className="btn-row">
-          <input type="text" placeholder='Фильтр по "email"'
-            onChange={valueChangeHandler}
-            value={valueInput}
-            className="form-control input-field" />
-          <div className="btn-wrapper">
-            <ButtonToggle color="primary" onClick={() => searchHandler(valueInput)}>Отфильтровать</ButtonToggle>{' '}
-            <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
+        <form action="" onSubmit={(event) => searchHandler(event, valueInput)}>
+          <div className="btn-row">
+            <input type="text" placeholder='Фильтр по "email"'
+              onChange={valueChangeHandler}
+              value={valueInput}
+              className="form-control input-field" />
+            <div className="btn-wrapper">
+              <ButtonToggle color="primary" type="submit">Отфильтровать</ButtonToggle>{' '}
+              <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
+            </div>
           </div>
-        </div>
+        </form>
         < Table bordered className="table-wrapper">
           <thead>
             <tr >

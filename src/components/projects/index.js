@@ -51,15 +51,17 @@ const Projects = ({ toggleRow, activeId }) => {
   }, [cloneArray, indexOfFirstPost, indexOfLastPost]);
 
   let searchHandler;
-  searchHandler = val => {
+  searchHandler = function (event, val) {
+    event.preventDefault();
     setSearch(val);  // изменил search
     setCurrentPage(1);
     if (!search) {
       settableData(tableData)
-    }
+    };
     setClone(cloneArray.filter(item => {  // поиск по title по совпадению 
       return item['title'].toLowerCase().includes(search.toLowerCase())
-    }))
+    }));
+
   };
 
   const onSort = sortField => {
@@ -84,17 +86,18 @@ const Projects = ({ toggleRow, activeId }) => {
     {
       tableData ?
         <div>
-
-          <div className="btn-row">
-            <input type="text"
-              className="form-control input-field"
-              onChange={valueChangeHandler}
-              value={valueInput} placeholder='Фильтр по "title"' />
-            <div className="btn-wrapper">
-              <ButtonToggle color="primary" onClick={() => searchHandler(valueInput)}>Отфильтровать</ButtonToggle>{' '}
-              <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
+          <form action="" onSubmit={(event) => searchHandler(event, valueInput)}>
+            <div className="btn-row">
+              <input type="text"
+                className="form-control input-field"
+                onChange={valueChangeHandler}
+                value={valueInput} placeholder='Фильтр по "title"' />
+              <div className="btn-wrapper">
+                <ButtonToggle color="primary" type="submit">Отфильтровать</ButtonToggle>{' '}
+                <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
+              </div>
             </div>
-          </div>
+          </form>
           < Table bordered className="table-wrapper" >
             <thead>
               <tr>
