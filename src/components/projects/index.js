@@ -13,47 +13,46 @@ const Projects = ({ toggleRow, activeId }) => {
   const [search, setSearch] = useState('');
   const [postsPerPage, setPostsPerPage] = useState(5);
   const pageNumbers = [];
-  const [cloneData, setDataClone] = useState([]);
   let [currentPosts, setPosts] = useState([]); // посты с пагинацией
   let [cloneArray, setClone] = useState([]); // копия основного массива
   const [valueInput, setValue] = useState('');
   const valueChangeHandler = event => {
-    setValue(event.target.value)
-  }
-  // setClone(JSON.parse(JSON.stringify(tableData)));
-  console.log("cloneArray", cloneArray);
+    setValue(event.target.value);
+    setSearch(event.target.value);  // изменил search
+  };
+  let indexOfLastPost = [];
+  let indexOfFirstPost = [];
+
 
   useEffect(() => {
     let url = "http://www.filltext.com/?rows=300&projectId=%7Bnumber%7C1000%7D&title=%7Bbusiness%7D&description=%7Blorem%7C32%7D&authorId=%7Bnumber%7C1000%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&billing=%7BccNumber%7CDISC%7D";
     fetch(url)
       .then(res => res.json())
       .then((data) => {
-        settableData(data)
+        settableData(data);
       })
       .catch(function (error) {
         console.log(error);
       })
   }, []);
 
-  const onSort = sortField => {
-    const cloneData = tableData.concat(); // клонирую массив данных с сервера
-    const sortType = sort === 'asc' ? 'desc' : 'asc'; // если sort = asc то меняю на противоположный и наоборот
-    const orderedData = _.orderBy(cloneData, sortField, sortType);
-    // сортирую нашу копию массива данных по полю sortField в направлении sortType
-    setDataClone(orderedData);
-    setSort(sortType);
-    setSortField(sortField);
-  }
-  // Get current posts
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const paginate = pageNumber => setCurrentPage(pageNumber);
-  for (let i = 1; i <= Math.ceil(tableData.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
-  setClone(tableData.slice())
-  const searchHandler = val => {
-    setSearch(val);
+  useEffect(() => {
+    setClone(tableData.slice()); // обязатель в useEffect проводи эту процедуру, иначе будет too many re-renders error
+  }, [tableData]);
+
+
+
+  let paginate = (pageNumber) => { setCurrentPage(pageNumber) };
+  indexOfLastPost = currentPage * postsPerPage;
+  indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+  useEffect(() => {
+    setPosts(cloneArray.slice(indexOfFirstPost, indexOfLastPost)); // задаю посты с пагинацией
+  }, [cloneArray, indexOfFirstPost, indexOfLastPost]);
+
+  let searchHandler;
+  searchHandler = val => {
+    setSearch(val);  // изменил search
     setCurrentPage(1);
     if (!search) {
       settableData(tableData)
@@ -61,19 +60,24 @@ const Projects = ({ toggleRow, activeId }) => {
     setClone(cloneArray.filter(item => {  // поиск по title по совпадению 
       return item['title'].toLowerCase().includes(search.toLowerCase())
     }))
-    cloneArray = cloneArray.filter(item => {
-      // поиск по title по совпадению
-      return item['title'].toLowerCase().includes(search.toLowerCase())
-    })
+  };
+
+  const onSort = sortField => {
+    const sortType = sort === 'asc' ? 'desc' : 'asc'; // если sort = asc то меняю на противоположный и наоборот
+    const orderedData = _.orderBy(cloneArray, sortField, sortType);
+    // сортирую нашу копию массива данных по полю sortField в направлении sortType
+    setClone(orderedData);
+    setSort(sortType);
+    setSortField(sortField);
   }
-  const searchClear = () => {
+
+  for (let i = 1; i <= Math.ceil(tableData.length / postsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  let searchClear = () => {
     setClone(tableData.slice());
-  }
-
-  setPosts(cloneArray.slice(indexOfFirstPost, indexOfLastPost));
-  // посты с пагинацией
-
-
+  };
 
   return <>
     {

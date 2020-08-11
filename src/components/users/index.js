@@ -5,9 +5,16 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 const Users = ({ toggleRow, activeId }) => {
-  const [tableUsers, setTableUsers] = useState(null); // состояние массива данных с сервера
+  const [tableUsers, setTableUsers] = useState([]); // состояние массива данных с сервера
   const [sort, setSort] = useState('asc');  // or 'desc'
-  const [sortField, setSortField] = useState('id')
+  const [sortField, setSortField] = useState('id');
+  const [search, setSearch] = useState('');
+  const [valueInput, setValue] = useState('');
+  let [cloneArrayU, setCloneU] = useState([]); // копия основного массива
+  const valueChangeHandler = event => {
+    setValue(event.target.value);
+    setSearch(event.target.value);
+  };
 
   useEffect(() => {
     let url = "http://www.filltext.com/?rows=32&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&adress=%7BaddressObject%7D&description=%7Blorem%7C32%7D";
@@ -21,24 +28,49 @@ const Users = ({ toggleRow, activeId }) => {
       });
   }, []);
 
+  useEffect(() => {
+    setCloneU(tableUsers.slice()); // обязательно в useEffect проводи эту процедуру, иначе будет too many re-renders error
+    // console.log('tableUsers', tableUsers);
+  }, [tableUsers]);
+
+
+  let searchHandler;
+
+  searchHandler = val => {
+    // setSearch(val);  // изменил search
+    if (!search) {
+      setTableUsers(tableUsers)
+    }
+    setCloneU(cloneArrayU.filter(item => {  // поиск по email по совпадению 
+      return item['email'].toLowerCase().includes(search.toLowerCase())
+    }))
+    console.log("search", search)
+  };
+
   const onSort = sortField => {
-    const cloneData = tableUsers.concat(); // клонирую массив данных с сервера
+    // const cloneData = tableUsers.concat(); // клонирую массив данных с сервера
     const sortType = sort === 'asc' ? 'desc' : 'asc'; // если sort = asc то меняю на противоположный и наоборот
-    const orderedData = _.orderBy(cloneData, sortField, sortType);
+    const orderedData = _.orderBy(cloneArrayU, sortField, sortType);
     // сортирую нашу копию массива данных по полю sortField в направлении sortType
-    setTableUsers(orderedData);
+    setCloneU(orderedData);
     setSort(sortType);
     setSortField(setSortField);
   }
+  let searchClear = () => {
+    setCloneU(tableUsers.slice());
+  };
 
   return <>
     {tableUsers ?
       <>
         <div className="btn-row">
-          <input type="text" placeholder='Фильтр по "email"' className="input-field" />
+          <input type="text" placeholder='Фильтр по "email"'
+            onChange={valueChangeHandler}
+            value={valueInput}
+            className="input-field" />
           <div className="btn-wrapper">
-            <ButtonToggle color="primary">Отфильтровать</ButtonToggle>{' '}
-            <ButtonToggle color="danger">Очистить поиск</ButtonToggle>{' '}
+            <ButtonToggle color="primary" onClick={() => searchHandler(valueInput)}>Отфильтровать</ButtonToggle>{' '}
+            <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
           </div>
         </div>
         < Table bordered className="table-wrapper">
@@ -53,7 +85,7 @@ const Users = ({ toggleRow, activeId }) => {
             </tr>
           </thead>
           <tbody>
-            {tableUsers.map((item) => (
+            {cloneArrayU.map((item) => (
               <tr key={Math.random()} className={classnames({ 'table-row': true, active: activeId === item.id })}
                 onClick={() => { toggleRow(item.id); }}>
                 <th>{item.id}</th>
