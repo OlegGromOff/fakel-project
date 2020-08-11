@@ -77,6 +77,7 @@ const Projects = ({ toggleRow, activeId }) => {
 
   let searchClear = () => {
     setClone(tableData.slice());
+    setValue('');
   };
 
   return <>

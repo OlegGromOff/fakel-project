@@ -58,6 +58,7 @@ const Users = ({ toggleRow, activeId }) => {
   }
   let searchClear = () => {
     setCloneU(tableUsers.slice());
+    setValue('');
   };
 
   return <>
@@ -67,7 +68,7 @@ const Users = ({ toggleRow, activeId }) => {
           <input type="text" placeholder='Фильтр по "email"'
             onChange={valueChangeHandler}
             value={valueInput}
-            className="input-field" />
+            className="form-control input-field" />
           <div className="btn-wrapper">
             <ButtonToggle color="primary" onClick={() => searchHandler(valueInput)}>Отфильтровать</ButtonToggle>{' '}
             <ButtonToggle color="danger" onClick={() => searchClear()}>Очистить поиск</ButtonToggle>{' '}
